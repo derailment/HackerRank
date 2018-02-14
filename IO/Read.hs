@@ -1,4 +1,4 @@
-module HackerRank.Read(
+module IO.Read(
     getLines
     ) where
 
@@ -9,5 +9,5 @@ getLines n
         thisLn <- getLine
         others <- getLines (n - 1)
         return (thisLn : others)
-    
+
 
