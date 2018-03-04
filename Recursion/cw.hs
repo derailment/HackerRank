@@ -24,6 +24,8 @@ testDic = pasteSlots (findSlots testCrossWords) (buildDic testWords (fromList []
 
 testValid = validate testCrossWords testDic
 
+testSolve = solve testCrossWords testWords
+
 type CrossWords = [String]
 type Noun = String
 type Size = Int
@@ -31,6 +33,12 @@ type Start = Int
 type End = Int
 type Id = Int
 data Slot = R Id (Start, End) | C Id (Start, End) | EmptySlot deriving (Show, Eq)
+
+solve :: CrossWords -> [Noun] -> CrossWords
+solve cw ws = case head $ L.filter (/= Nothing) [validate cw (pasteSlots ss (buildDic ws (fromList []))) | ss <- permu]
+  of Just cw' -> cw'
+  where slots = findSlots cw
+        permu = permutations slots
 
 validate :: CrossWords -> M.Map Size [(Noun, Slot)] -> Maybe CrossWords
 validate cw m = f (Just cw) (M.toList m)
@@ -93,15 +101,15 @@ buildDic (w : ws) m = buildDic ws m'
                     Just _ -> M.insertWith (++) len [(w, EmptySlot)] m
         len = length w
 
-{-
+
 main :: IO ()
 main = do
-  hs <- getLines 10
-  vs <- zipHor hs
-  endline <- getLine
-  let ws = splitOn ";" endline
-  putStrLn $ show vs
--}
+  cw <- getLines 10
+  lastline <- getLine
+  let ws = splitOn ";" lastline
+  forM_ (solve cw ws) $ \s -> do
+    putStrLn s
+
 
 
 
