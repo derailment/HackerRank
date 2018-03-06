@@ -1,8 +1,18 @@
 import Data.Foldable
-import IO.Read
+
+
+getLines :: Int -> IO [String]
+getLines n
+    | n <= 0 = return []
+    | otherwise = do
+        thisLn <- getLine
+        others <- getLines (n - 1)
+        return (thisLn : others)
+
+
 
 main :: IO ()
-main = do 
+main = do
     ctemp <- getLine
     let caseN = read ctemp :: Int
     forM_ [1 .. caseN] $ \_ -> do
@@ -14,8 +24,8 @@ main = do
 
 valFun :: [(Int, Int)] -> String
 valFun [] = "YES"
-valFun ((hx, hy) : ts) = 
-    if valFun ts == "NO" 
+valFun ((hx, hy) : ts) =
+    if valFun ts == "NO"
         then  "NO"
         else if any (== "NO") [ "NO" |(x, y) <- ts, (hx == x) && (hy /= y)]
             then "NO"

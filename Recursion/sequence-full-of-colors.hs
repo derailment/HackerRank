@@ -1,6 +1,13 @@
-import IO.Read
 import Data.List
 import Data.Foldable
+
+getLines :: Int -> IO [String]
+getLines n
+    | n <= 0 = return []
+    | otherwise = do
+        thisLn <- getLine
+        others <- getLines (n - 1)
+        return (thisLn : others)
 
 main :: IO ()
 main = do

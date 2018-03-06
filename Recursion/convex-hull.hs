@@ -1,7 +1,14 @@
-import IO.Read
 import Data.List
 import Data.Function
 import Data.Foldable
+
+getLines :: Int -> IO [String]
+getLines n
+    | n <= 0 = return []
+    | otherwise = do
+        thisLn <- getLine
+        others <- getLines (n - 1)
+        return (thisLn : others)
 
 main :: IO ()
 main = do
@@ -11,9 +18,9 @@ main = do
     let ts = [(read (words str !! 0) :: Int, read (words str !! 1) :: Int) | str <- strs]
     let ((ox, oy) : ps) = sortBy comp' ts
     let ws = sortBy (compare `on` (angle (ox, oy))) ps
-    putStrLn $ show ws
     let rs = f [(ox, oy)] ws
-    putStrLn $ concave rs ((ox, oy) : ws)
+    let p = peri rs (ox, oy)
+    putStrLn $ show p
 
 comp' :: (Int, Int) -> (Int, Int) -> Ordering
 comp' (ax, ay) (bx, by)
@@ -21,11 +28,9 @@ comp' (ax, ay) (bx, by)
   | ay < by = LT
   | otherwise = if ax >= bx then GT else LT
 
-
-concave :: [(Int, Int)] -> [(Int, Int)] -> String
-concave rs ps
-  | (length ps - length rs) == 0 = "NO"
-  | otherwise = "YES"
+peri :: [(Int, Int)] -> (Int, Int) -> Double
+peri ((ax, ay) : []) (bx, by) = sqrt (fromIntegral ((ax - bx) ^ 2) + fromIntegral ((ay - by) ^ 2))
+peri ((ax, ay) : (bx, by) : rs) (ox, oy) = sqrt (fromIntegral ((ax - bx) ^ 2) + fromIntegral ((ay - by) ^ 2)) + peri ((bx, by) : rs) (ox, oy)
 
 f :: [(Int, Int)] -> [(Int, Int)] -> [(Int, Int)]
 f rs [] =  rs
@@ -35,7 +40,7 @@ f rs (p : ps)
 
 outside :: (Int, Int) -> (Int, Int) -> (Int, Int) -> Bool
 outside (sx, sy) (ex, ey) (px, py)
-  | ((a * px) + (b * py) + c) > 0 = True
+  | ((a * px) + (b * py) + c) >= 0 = True
   | otherwise = False
   where a = ey - sy
         b = sx - ex

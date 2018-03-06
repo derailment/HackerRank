@@ -1,4 +1,3 @@
-import IO.Read
 import Data.Foldable
 
 main :: IO ()

@@ -1,4 +1,3 @@
-import IO.Read
 import Data.List
 import Data.Function
 import Data.Foldable
